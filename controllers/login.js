@@ -1,4 +1,5 @@
 const pool = require("../db/pool");
+const { NotFoundErr, InvalidCredentialsErr } = require("../errors");
 
 const logInStudent = async (req, res, next) => {
   try {
@@ -18,23 +19,17 @@ const logInTeacher = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Please provide all credentials" });
+      throw new InvalidCredentialsErr("Please provide all credentials");
     }
     const teachers = pool.query("SELECT * FROM teachers WHERE email = $1", [
       email,
     ]);
     if (!teachers[0]) {
-      return res
-        .staus(404)
-        .json({ success: false, message: "No user found with this email" });
+      throw new NotFoundErr("No user found with this email");
     }
 
     if (password !== teachers[0].hashedpaswword) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Invalid password" });
+      throw new InvalidCredentialsErr("Invalid password");
     }
 
     res.session.user = teachers[0];
