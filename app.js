@@ -7,6 +7,7 @@ const errorHandelingMiddleware = require("./middlewares/errHandling");
 const logInRouter = require("./routes/login");
 const adminRouter = require("./routes/admin");
 const app = express();
+app.use(express.json());
 
 //Auth
 app.use(
