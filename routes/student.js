@@ -9,7 +9,7 @@ const {
 const { adminAuth } = require("../middlewares/Auth");
 
 router
-  .route("/", adminAuth)
+  .route("/")
   .get(adminAuth, getStudentsOfaGroup)
   .post(adminAuth, createStudent);
 

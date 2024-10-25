@@ -1,17 +1,7 @@
 const pool = require("../db/pool");
 const bcrypt = require("bcryptjs");
 const { NotFoundErr, InvalidCredentialsErr } = require("../errors");
-const { query } = require("express");
 
-//Teacher nd admin handlers
-const getStudentsOfaClass = async (req, res, next) => {
-  try {
-  } catch (error) {
-    next(error);
-  }
-};
-
-//admin handlers
 const getStudentsOfaGroup = async (req, res, next) => {
   try {
     const { groupId } = req.query;
@@ -84,6 +74,44 @@ const createStudent = async (req, res, next) => {
 const updateStudent = async (req, res, next) => {
   //DOn't forget to hash the password here and use it in log in routes
   try {
+    const { firstname, lastname, email, password, groupid } = req.body;
+
+    const { id: studentId } = req.params;
+
+    if (!firstname || !lastname || !email || !groupid) {
+      throw new InvalidCredentialsErr("Please provide all the required fields");
+    }
+
+    const studentInDB = await pool.query(
+      "SELECT id FROM students WHERE id = $1",
+      [studentId]
+    );
+
+    if (!studentInDB.rows[0]) {
+      throw new NotFoundErr(`No student was found with id: ${studentId}`);
+    }
+
+    let query =
+      "UPDATE students SET email = $1, firstname = $2, lastname = $3, groupid = $4";
+
+    if (password) {
+      const salt = await bcrypt.genSalt(10);
+      const hashedpassword = await bcrypt.hash(password, salt);
+
+      query = `${query}, hashedpassword = '${hashedpassword}'`;
+    }
+
+    query = `${query} WHERE id = $5`;
+
+    const updateStudent = await pool.query(query, [
+      email,
+      firstname,
+      lastname,
+      groupid,
+      studentId,
+    ]);
+
+    res.status(200).json({ success: true });
   } catch (error) {
     next(error);
   }
@@ -91,13 +119,29 @@ const updateStudent = async (req, res, next) => {
 
 const deleteStudent = async (req, res, next) => {
   try {
+    const { id: studentId } = req.params;
+
+    const studentInDB = await pool.query(
+      "SELECT id FROM students WHERE id = $1",
+      [studentId]
+    );
+
+    if (!studentInDB.rows[0]) {
+      throw new NotFoundErr(`No student was found with id: ${studentId}`);
+    }
+
+    const deleteStudent = await pool.query(
+      "DELETE FROM students WHERE id = $1",
+      [studentId]
+    );
+
+    res.status(200).json({ success: true });
   } catch (error) {
     next(error);
   }
 };
 
 module.exports = {
-  getStudentsOfaClass,
   getStudentsOfaGroup,
   createStudent,
   updateStudent,
