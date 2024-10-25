@@ -6,6 +6,7 @@ const errorHandelingMiddleware = require("./middlewares/errHandling");
 //routes imports
 const logInRouter = require("./routes/login");
 const studentRouter = require("./routes/student");
+const teacherRouter = require("./routes/teacher");
 const app = express();
 app.use(express.json());
 
@@ -22,6 +23,7 @@ app.use(
 //Routes
 app.use("/api/login", logInRouter);
 app.use("/api/students", studentRouter);
+app.use("/api/teachers", teacherRouter);
 
 //Error handling middleware
 app.use(errorHandelingMiddleware);
