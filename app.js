@@ -5,7 +5,7 @@ const session = require("express-session");
 const errorHandelingMiddleware = require("./middlewares/errHandling");
 //routes imports
 const logInRouter = require("./routes/login");
-const adminRouter = require("./routes/admin");
+const studentRouter = require("./routes/student");
 const app = express();
 app.use(express.json());
 
@@ -20,8 +20,9 @@ app.use(
 );
 
 //Routes
-app.use("/api/admin", adminRouter);
 app.use("/api/login", logInRouter);
+app.use("/api/students", studentRouter);
+
 //Error handling middleware
 app.use(errorHandelingMiddleware);
 const PORT = process.env.PORT || 8080;

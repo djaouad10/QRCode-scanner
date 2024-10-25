@@ -1,4 +1,5 @@
 const pool = require("../db/pool");
+const bcrypt = require("bcryptjs");
 const { NotFoundErr, InvalidCredentialsErr } = require("../errors");
 
 const logInStudent = async (req, res, next) => {
@@ -13,10 +14,15 @@ const logInStudent = async (req, res, next) => {
     );
 
     if (!students.rows[0]) {
-      throw new NotFoundErr("No user was found with this email");
+      throw new NotFoundErr("No student was found with this email");
     }
 
-    if (password !== students.rows[0].hashedpassword) {
+    const isMatch = await bcrypt.compare(
+      password,
+      students.rows[0].hashedpassword
+    );
+
+    if (!isMatch) {
       throw new InvalidCredentialsErr("Invalid password");
     }
 
@@ -42,10 +48,15 @@ const logInTeacher = async (req, res, next) => {
       [email]
     );
     if (!teachers.rows[0]) {
-      throw new NotFoundErr("No user was found with this email");
+      throw new NotFoundErr("No teahcer was found with this email");
     }
 
-    if (password !== teachers.rows[0].hashedpassword) {
+    const isMatch = await bcrypt.compare(
+      password,
+      teachers.rows[0].hashedpassword
+    );
+
+    if (!isMatch) {
       throw new InvalidCredentialsErr("Invalid password");
     }
 
