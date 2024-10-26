@@ -58,7 +58,7 @@ const createStudent = async (req, res, next) => {
     const query =
       "INSERT INTO students(firstname, lastname, email, hashedpassword, groupid) VALUES($1, $2, $3, $4, $5::UUID)";
 
-    const dbResponse = pool.query(query, [
+    const dbResponse = await pool.query(query, [
       firstname,
       lastname,
       email,
@@ -73,7 +73,6 @@ const createStudent = async (req, res, next) => {
 };
 
 const updateStudent = async (req, res, next) => {
-  //DOn't forget to hash the password here and use it in log in routes
   try {
     const { firstname, lastname, email, password, groupid } = req.body;
 

@@ -44,7 +44,7 @@ const logInTeacher = async (req, res, next) => {
       throw new InvalidCredentialsErr("Please provide all credentials");
     }
     const teachers = await pool.query(
-      "SELECT * FROM teachers WHERE email = $1",
+      "SELECT id, firstname, lastname, email, hashedpassword, role ,departement, ARRAY_TO_JSON(levels) levels FROM teachers WHERE email = $1",
       [email]
     );
     if (!teachers.rows[0]) {

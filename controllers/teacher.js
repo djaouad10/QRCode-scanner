@@ -7,9 +7,9 @@ const getTeacherByModule = async (req, res, next) => {
     const { module } = req.query;
 
     let query =
-      "SELECT id, firstname, lastname, email, departement, levels FROM teachers";
+      "SELECT id, firstname, lastname, email, departement, ARRAY_TO_JSON(levels) levels FROM teachers WHERE role = 'teacher'";
     if (module) {
-      query = `${query} WHERE '${module}' = ANY(teachers.modules)`;
+      query = `${query} AND '${module}' = ANY(teachers.modules)`;
     }
 
     query = `${query} ORDER BY firstname`;

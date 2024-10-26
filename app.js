@@ -7,7 +7,10 @@ const errorHandelingMiddleware = require("./middlewares/errHandling");
 const logInRouter = require("./routes/login");
 const studentRouter = require("./routes/student");
 const teacherRouter = require("./routes/teacher");
+const groupRouter = require("./routes/group");
+
 const app = express();
+
 app.use(express.json());
 
 //Auth
@@ -24,6 +27,7 @@ app.use(
 app.use("/api/login", logInRouter);
 app.use("/api/students", studentRouter);
 app.use("/api/teachers", teacherRouter);
+app.use("/api/groups", groupRouter);
 
 //Error handling middleware
 app.use(errorHandelingMiddleware);

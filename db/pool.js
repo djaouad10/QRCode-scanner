@@ -1,6 +1,6 @@
-const pg = require("pg");
+const { Pool } = require("pg");
 
-const pool = new pg.Pool({
+const pool = new Pool({
   user: "scannerapp",
   password: "mypassword", // Make sure this is the correct password
   host: "localhost",
