@@ -54,9 +54,10 @@ const createStudent = async (req, res, next) => {
 
     const salt = await bcrypt.genSalt(10);
     const hashedpassword = await bcrypt.hash(password, salt);
-    console.log(hashedpassword);
+
     const query =
       "INSERT INTO students(firstname, lastname, email, hashedpassword, groupid) VALUES($1, $2, $3, $4, $5::UUID)";
+
     const dbResponse = pool.query(query, [
       firstname,
       lastname,
