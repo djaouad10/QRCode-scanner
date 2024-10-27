@@ -8,6 +8,7 @@ const logInRouter = require("./routes/login");
 const studentRouter = require("./routes/student");
 const teacherRouter = require("./routes/teacher");
 const groupRouter = require("./routes/group");
+const moduleRouter = require("./routes/module");
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use("/api/login", logInRouter);
 app.use("/api/students", studentRouter);
 app.use("/api/teachers", teacherRouter);
 app.use("/api/groups", groupRouter);
+app.use("/api/modules", moduleRouter);
 
 //Error handling middleware
 app.use(errorHandelingMiddleware);
