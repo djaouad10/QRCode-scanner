@@ -63,33 +63,27 @@ const createModule = async (req, res, next) => {
 
 const updateModule = async (req, res, next) => {
   try {
-    try {
-      const { id: moduleId } = req.params;
-      const { name } = req.body;
+    const { id: moduleId } = req.params;
+    const { name } = req.body;
 
-      if (!name) {
-        throw new InvalidCredentialsErr(
-          "Please provide all the required fields"
-        );
-      }
-
-      const moduleInDB = await pool.query(
-        "SELECT id FROM modules WHERE id = $1",
-        [moduleId]
-      );
-
-      if (!moduleInDB.rows[0]) {
-        throw new NotFoundErr("Module doesn't exists");
-      }
-
-      const updateModule = await pool.query(
-        "UPDATE modules SET name = $1 WHERE id = $2",
-        [name, moduleId]
-      );
-      res.status(200).json({ success: true });
-    } catch (error) {
-      next(error);
+    if (!name) {
+      throw new InvalidCredentialsErr("Please provide all the required fields");
     }
+
+    const moduleInDB = await pool.query(
+      "SELECT id FROM modules WHERE id = $1",
+      [moduleId]
+    );
+
+    if (!moduleInDB.rows[0]) {
+      throw new NotFoundErr("Module doesn't exists");
+    }
+
+    const updateModule = await pool.query(
+      "UPDATE modules SET name = $1 WHERE id = $2",
+      [name, moduleId]
+    );
+    res.status(200).json({ success: true });
   } catch (error) {
     next(error);
   }
@@ -97,6 +91,21 @@ const updateModule = async (req, res, next) => {
 
 const deleteModule = async (req, res, next) => {
   try {
+    const { id: moduleId } = req.params;
+
+    const moduleInDB = await pool.query(
+      "SELECT id FROM modules WHERE id = $1",
+      [moduleId]
+    );
+
+    if (!moduleInDB.rows[0]) {
+      throw new NotFoundErr("Module doesn't exists");
+    }
+
+    const deleteModule = await pool.query("DELETE FROM modules WHERE id = $2", [
+      moduleId,
+    ]);
+    res.status(200).json({ success: true });
   } catch (error) {
     next(error);
   }

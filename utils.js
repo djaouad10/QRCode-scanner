@@ -9,3 +9,5 @@ const generateQRCode = async (classId) => {
     return null;
   }
 };
+
+module.exports = { generateQRCode };
