@@ -3,7 +3,7 @@ const { InvalidCredentialsErr, NotFoundErr } = require("../errors");
 
 const getTeacherModules = async (req, res, next) => {
   try {
-    const { modules } = req.session.user;
+    const { modules } = req.user;
 
     const query = "SELECT * FROM modules WHERE id = ANY($1)";
     const getModules = await pool.query(query, [modules]);
@@ -102,7 +102,7 @@ const deleteModule = async (req, res, next) => {
       throw new NotFoundErr("Module doesn't exists");
     }
 
-    const deleteModule = await pool.query("DELETE FROM modules WHERE id = $2", [
+    const deleteModule = await pool.query("DELETE FROM modules WHERE id = $1", [
       moduleId,
     ]);
     res.status(200).json({ success: true });

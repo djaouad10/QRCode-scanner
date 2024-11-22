@@ -1,5 +1,5 @@
 const express = require("express");
-const { adminAuth } = require("../middlewares/Auth");
+const { authMiddleware, adminAuthMiddleware } = require("../middlewares/Auth");
 const router = express.Router();
 const {
   getTeacherByModule,
@@ -11,21 +11,23 @@ const { UnauthorizedErr } = require("../errors");
 
 router
   .route("/")
-  .get((req, res, next) => {
-    const { session } = req;
-    if (
-      session.user &&
-      (session.user.role === "admin" || session.user.role === "student")
-    ) {
-      return next();
-    }
-    throw new UnauthorizedErr("You're unauthorizd to access this recource");
-  }, getTeacherByModule)
-  .post(adminAuth, createTeacher);
+  .get(
+    authMiddleware,
+    (req, res, next) => {
+      const { user } = req;
+
+      if (user && (user.role === "admin" || user.role === "student")) {
+        return next();
+      }
+      throw new UnauthorizedErr("You're unauthorizd to access this recource");
+    },
+    getTeacherByModule
+  )
+  .post(authMiddleware, adminAuthMiddleware, createTeacher);
 
 router
   .route("/:id")
-  .put(adminAuth, updateTeacher)
-  .delete(adminAuth, deleteTeacher);
+  .put(authMiddleware, adminAuthMiddleware, updateTeacher)
+  .delete(authMiddleware, adminAuthMiddleware, deleteTeacher);
 
 module.exports = router;

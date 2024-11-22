@@ -44,8 +44,8 @@ const createTeacher = async (req, res, next) => {
       !email ||
       !password ||
       !departement ||
-      !modules ||
-      !levels
+      modules.length == 0 ||
+      levels.length == 0
     ) {
       throw new InvalidCredentialsErr("Please provide all the required fields");
     }
@@ -78,7 +78,9 @@ const createTeacher = async (req, res, next) => {
       levels,
     ]);
 
-    res.status(201).json({ success: true });
+    res
+      .status(201)
+      .json({ success: true, message: "Teacher created with success" });
   } catch (error) {
     next(error);
   }
@@ -86,10 +88,9 @@ const createTeacher = async (req, res, next) => {
 
 const updateTeacher = async (req, res, next) => {
   try {
-    const { firstname, lastname, email, password, levels } = req.body;
-
+    const { firstname, lastname, email, password, levels, departement } =
+      req.body;
     const { id: teacherId } = req.params;
-
     if (!firstname || !lastname || !email || !levels) {
       throw new InvalidCredentialsErr("Please provide all the required fields");
     }
@@ -104,7 +105,7 @@ const updateTeacher = async (req, res, next) => {
     }
 
     let query =
-      "UPDATE teachers SET email = $1, firstname = $2, lastname = $3, levels = $4";
+      "UPDATE teachers SET email = $1, firstname = $2, lastname = $3, levels = $4, departement = $5 ";
 
     if (password) {
       const salt = await bcrypt.genSalt(10);
@@ -113,13 +114,14 @@ const updateTeacher = async (req, res, next) => {
       query = `${query}, hashedpassword = '${hashedpassword}'`;
     }
 
-    query = `${query} WHERE id = $5`;
+    query = `${query} WHERE id = $6`;
 
     const updateTeacher = await pool.query(query, [
       email,
       firstname,
       lastname,
       levels,
+      departement,
       teacherId,
     ]);
 

@@ -4,7 +4,7 @@ const { InvalidCredentialsErr, NotFoundErr } = require("../errors");
 const getGroupsOfTeacher = async (req, res, next) => {
   try {
     //Groups in teacher.levels
-    const { levels } = req.session.user;
+    const { levels } = req.user;
 
     const query = "SELECT * FROM groups WHERE level = ANY($1)";
     const getGroups = await pool.query(query, [levels]);
@@ -23,12 +23,13 @@ const getGroupsByLevel = async (req, res, next) => {
   try {
     const { level } = req.query;
 
-    if (!level) {
-      throw new InvalidCredentialsErr("Please provide a level");
+    let query = "SELECT * FROM groups ";
+    if (level) {
+      query = `${query} WHERE level = '${level}'`;
     }
+    query = `${query}  ORDER BY level`;
 
-    const query = "SELECT * FROM groups WHERE level = $1";
-    const getGroups = await pool.query(query, [level]);
+    const getGroups = await pool.query(query);
 
     res.status(200).json({
       success: true,
@@ -99,7 +100,6 @@ const updateGroup = async (req, res, next) => {
 };
 
 const deleteGroup = async (req, res, next) => {
-  //Unfinished (soft delete???)
   try {
     const { id: groupId } = req.params;
 

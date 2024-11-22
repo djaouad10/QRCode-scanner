@@ -1,6 +1,6 @@
 require("dotenv").config();
 const express = require("express");
-const session = require("express-session");
+const cors = require("cors");
 //middleware imports
 const errorHandelingMiddleware = require("./middlewares/errHandling");
 //routes imports
@@ -14,17 +14,13 @@ const classRouter = require("./routes/class");
 
 const app = express();
 
-app.use(express.json());
-
-//Auth
 app.use(
-  session({
-    secret: "jdkflqfmodjfdjf",
-    resave: false,
-    saveUninitialized: false,
-    cookie: { secure: false },
+  cors({
+    origin: "http://localhost:5173",
   })
 );
+app.use(express.json());
+//Auth
 
 //Routes
 app.use("/api/login", logInRouter);

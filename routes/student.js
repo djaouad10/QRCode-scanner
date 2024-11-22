@@ -6,16 +6,16 @@ const {
   deleteStudent,
   createStudent,
 } = require("../controllers/student");
-const { adminAuth } = require("../middlewares/Auth");
+const { authMiddleware, adminAuthMiddleware } = require("../middlewares/Auth");
 
 router
   .route("/")
-  .get(adminAuth, getStudentsOfaGroup)
-  .post(adminAuth, createStudent);
+  .get(authMiddleware, adminAuthMiddleware, getStudentsOfaGroup)
+  .post(authMiddleware, adminAuthMiddleware, createStudent);
 
 router
   .route("/:id")
-  .delete(adminAuth, deleteStudent)
-  .put(adminAuth, updateStudent);
+  .delete(authMiddleware, adminAuthMiddleware, deleteStudent)
+  .put(authMiddleware, adminAuthMiddleware, updateStudent);
 
 module.exports = router;

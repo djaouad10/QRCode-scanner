@@ -4,7 +4,7 @@ const { NotFoundErr, UnauthorizedErr } = require("../errors");
 const classBelongsToTeacher = async (req, res, next) => {
   try {
     const { id: classId } = req.params;
-    const { id: teacherId } = req.session.user;
+    const { id: teacherId } = req.user;
 
     const classInDB = await pool.query(
       "SELECT teacherid FROM classes WHERE id = $1",
@@ -33,7 +33,7 @@ const scanAuth = async (req, res, next) => {
 
   try {
     const { classId } = req.body;
-    const { id: studentId, groupid: studentGroupId } = req.session.user;
+    const { id: studentId, groupid: studentGroupId } = req.user;
 
     const classInDB = await pool.query(
       "SELECT valid, type, groupid FROM classes WHERE id = $1",

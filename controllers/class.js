@@ -4,7 +4,7 @@ const { generateQRCode } = require("../utils");
 
 const getClassesOfTeacher = async (req, res, next) => {
   try {
-    const { id: teacherId } = req.session.user;
+    const { id: teacherId } = req.user;
     const allClasses = await pool.query(
       "SELECT c.id, c.classdate, c.type , g.level grp_level , g.number grp_num, g.section grp_section, m.name module, t.firstname teacher_firstname, t.lastname teacher_lastname   FROM classes c JOIN groups g ON c.groupid = g.id JOIN teachers t ON c.teacherid = t.id JOIN modules m ON c.moduleid = m.id  WHERE teacherid = $1",
       [teacherId]
@@ -29,7 +29,7 @@ const getStudentsOfClass = async (req, res, next) => {
     //but this route handler is gonna be used in an admin endpoint too so we have to check
     //the existene of the class in the admin route too
 
-    if (req.session.user.role == "admin") {
+    if (req.user.role == "admin") {
       const classInDB = await pool.query(
         "SELECT teacherid FROM classes WHERE id = $1",
         [classId]
@@ -64,7 +64,7 @@ const getSingleClass = async (req, res, next) => {
     //but this route handler is gonna be used in an admin endpoint too so we have to check
     //the existene of the class in the admin route too
 
-    if (req.session.user.role == "admin") {
+    if (req.user.role == "admin") {
       const classInDB = await pool.query(
         "SELECT teacherid FROM classes WHERE id = $1",
         [classId]
@@ -109,7 +109,7 @@ const getClassesOfGroup = async (req, res, next) => {
 const createClass = async (req, res, next) => {
   try {
     //Validation
-    const teacherId = req.session.user.id;
+    const teacherId = req.user.id;
     const { groupId, moduleId, starts_at, ends_at, type, semester, room } =
       req.body;
 
@@ -204,7 +204,7 @@ const registerToClass = async (req, res, next) => {
   //students
   try {
     const { classId } = req.body;
-    const { id: studentId } = req.session.user;
+    const { id: studentId } = req.user;
 
     const registerToClass = await pool.query(
       "INSERT INTO registrations(studentid, classid) VALUES($1, $2)",

@@ -1,5 +1,7 @@
+require("dotenv").config();
 const pool = require("../db/pool");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const { NotFoundErr, InvalidCredentialsErr } = require("../errors");
 
 const logInStudent = async (req, res, next) => {
@@ -26,10 +28,20 @@ const logInStudent = async (req, res, next) => {
       throw new InvalidCredentialsErr("Invalid password");
     }
 
-    req.session.user = students.rows[0];
+    const { id, role, groupid, firstname } = students.rows[0];
+    const token = jwt.sign(
+      { id, role, groupid, firstname },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "12h",
+      }
+    );
+
     res.status(200).json({
       success: true,
-      message: `$Welcom ${students.rows[0].firstname}`,
+      message: `Welcom ${students.rows[0].firstname}`,
+      token,
+      url: `/${role}`,
     });
   } catch (error) {
     console.log(error);
@@ -60,11 +72,20 @@ const logInTeacher = async (req, res, next) => {
       throw new InvalidCredentialsErr("Invalid password");
     }
 
-    req.session.user = teachers.rows[0];
+    const { id, role, levels, modules, firstname } = teachers.rows[0];
+    const token = jwt.sign(
+      { id, role, levels, modules, firstname },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "12h",
+      }
+    );
 
     res.status(200).json({
       success: true,
-      message: `$Welcom ${teachers.rows[0].firstname}`,
+      message: `Welcom ${teachers.rows[0].firstname}`,
+      token,
+      url: `/${role}`,
     });
   } catch (error) {
     next(error);

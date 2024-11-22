@@ -1,11 +1,12 @@
+require("dotenv").config();
 const { Pool } = require("pg");
 
 const pool = new Pool({
-  user: "scannerapp",
-  password: "mypassword", // Make sure this is the correct password
-  host: "localhost",
-  database: "AlgoProject",
-  port: 5432,
+  user: process.env.USER,
+  password: process.env.PASSWORD,
+  host: process.env.HOST,
+  database: process.env.DATABASE,
+  port: process.env.DATABASE_PORT,
 });
 
 module.exports = pool;

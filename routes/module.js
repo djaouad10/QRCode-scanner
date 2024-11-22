@@ -7,14 +7,23 @@ const {
   deleteModule,
   updateModule,
 } = require("../controllers/module");
-const { teacherAuth, adminAuth } = require("../middlewares/Auth");
+const {
+  authMiddleware,
+  teacherAuthMiddleware,
+  adminAuthMiddleware,
+} = require("../middlewares/Auth");
 const router = express.Router();
 
-router.route("/mymodules").get(teacherAuth, getTeacherModules);
-router.route("/").get(adminAuth, getAllModules).post(adminAuth, createModule);
+router
+  .route("/mymodules")
+  .get(authMiddleware, teacherAuthMiddleware, getTeacherModules);
+router
+  .route("/")
+  .get(authMiddleware, adminAuthMiddleware, getAllModules)
+  .post(authMiddleware, adminAuthMiddleware, createModule);
 router
   .route("/:id")
-  .put(adminAuth, updateModule)
-  .delete(adminAuth, deleteModule);
+  .put(authMiddleware, adminAuthMiddleware, updateModule)
+  .delete(authMiddleware, adminAuthMiddleware, deleteModule);
 
 module.exports = router;
